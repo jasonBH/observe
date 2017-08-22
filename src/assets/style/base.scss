@@ -1,0 +1,35 @@
+body,input,select,textarea,button,option{
+    font:.28rem Helvetica, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+body,div,main,aside,article,header,footer,
+ul,ol,li,dl,dt,dd,
+table,tr,td,th,
+img,p,span,p,
+form,input,textarea,button,select,legend,fieldset,
+h1,h2,h3,h4,h5,h6{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    list-style-type: none;
+}
+a{
+    text-decoration:none;
+    cursor: pointer;
+    outline: none;
+}
+table{
+    border-collapse:collapse;
+}
+img{
+    border:none;
+}
+[v-cloak]{
+    display: none;
+}
+
+
+
+
+

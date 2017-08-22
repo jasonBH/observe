@@ -1,0 +1,14 @@
+{
+    "lib": {
+        "jquery": "jquery",
+        "vue": "vue",
+        "lodash": "lodash"
+    },
+    "vendor": ["jquery", "vue", "lodash"],
+    "minChunks": 2,
+    "favicon":"/assets/images/fish3.png",
+    "pathHtml":"/entries/*.html",
+    "pathJs":"/entries/*.js",
+    "pathTs":"/entries/*.ts",
+    "pathStatic":"/static"
+}

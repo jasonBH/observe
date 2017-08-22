@@ -1,0 +1,112 @@
+/* css */
+import './index.scss';
+import '@/assets/style/inline.css'
+/* plugins */
+import 'babel-polyfill';
+
+/* libs */
+import 'expose-loader?jQuery!expose-loader?$!jquery';
+import "expose-loader?_!lodash";
+import Vue from 'vue';
+import Router from 'vue-router';
+import FastClick from 'fastclick'
+FastClick.attach(document.body);
+
+
+/* tools */
+import utils from '@/lib/Utils.js';
+window.utils = utils;
+
+
+
+import {Observer} from '@/observer.js';
+import {Formvalidation} from '@/lib/VerifyPolicy.js';
+import '@/module/app.js';
+
+
+
+
+document.documentElement.style.fontSize = document.documentElement.clientWidth / 7.5 + 'px';
+
+
+console.log("index start");
+$('body').append("<div>ssssssssssssssssssssss</div>")
+console.log("vue:", Vue);
+console.log("vue-router:", Router)
+console.log("_:", _.chunk(['a', 'b', 'c', 'd'], 2));
+
+//asyn
+require(["@/vuetest.js"], (vuetest)=>{
+    vuetest.default()
+});
+
+//双向绑定
+var aaa = {
+    v:0
+};
+console.log(aaa)
+function callbackA(v){
+    console.log("callbackA aaa:", aaa.v);
+}
+new Observer(aaa, callbackA);
+
+let btnadd = document.getElementById("add");
+btnadd.onclick = function(){
+    aaa.v++;
+    // alert(aaa.v)
+    // alert(wx)
+
+    let img = new Image();
+    img.src = 'https://www.huceo.com/zb_users/upload/2015/12/201512151450189288119520.jpg';
+    document.body.appendChild(img)
+
+
+};
+
+//表单验证策略
+let fd = new Formvalidation();
+fd.add('', {method:'isNoEmpty'}, '值不能为空');
+let fbs = fd.start((msg)=>{
+    console.log(msg)
+});
+console.log('表单验证策略 isNoEmpty:',fbs)
+
+
+
+//worker
+let workerValueEl = document.getElementById("workerValue");
+workerValueEl.innerHTML = "Time goes by: 0 s";
+let worker;
+function workerOn(event){
+    // console.log("worker:"+event.data);
+    workerValueEl.innerHTML = "Time goes by: "+parseInt(event.data/1000)+" s";
+}
+
+let workstart = document.getElementById("workstart");
+let workstop = document.getElementById("workstop");
+workstart.onclick = function(){
+    if(typeof(Worker)=="undefined"){
+        alert("Sorry! No Web Worker support..");
+        return
+    };
+    if(!worker){
+        worker = new Worker('./static/Workers.js');
+        worker.onmessage = workerOn;
+    }
+    // console.log("start click:", worker)
+    worker.postMessage("start");
+}
+workstop.onclick = function(){
+    // if(worker) worker.postMessage("stop");
+    worker.terminate();
+}
+console.log("index complete")
+
+
+
+// console.log(window.location.href)
+console.log("query:", utils.getQueryString(window.location.href, 'p1'));
+
+
+console.log("navigator:", navigator)
+console.log("caches:", caches)

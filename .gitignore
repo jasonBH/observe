@@ -1,0 +1,7 @@
+/node_modules/
+/bin_dev/
+/bin/
+/.git/
+.vscode
+debug.log
+npm-debug.log
