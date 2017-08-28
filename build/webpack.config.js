@@ -87,7 +87,14 @@ plugins.push(
         to: out_bin+libmap.pathStatic,
         ignore: ['.*']
       }
-    ])
+    ]),
+    new CopyWebpackPlugin([
+        {
+          from: PATH_src+libmap.pathServiceWorkers,
+          to: out_bin,
+          ignore: ['.*']
+        }
+      ])
 );
 //生产环境 清除/压缩
 if(isDev==false){

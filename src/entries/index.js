@@ -19,9 +19,9 @@ window.utils = utils;
 
 
 
-import {Observer} from '@/observer.js';
-import {Formvalidation} from '@/lib/VerifyPolicy.js';
-import '@/module/app.js';
+// import {Observer} from '@/observer.js';
+// import {Formvalidation} from '@/lib/VerifyPolicy.js';
+
 
 
 
@@ -29,26 +29,26 @@ import '@/module/app.js';
 document.documentElement.style.fontSize = document.documentElement.clientWidth / 7.5 + 'px';
 
 
-console.log("index start");
+// console.log("index start");
 $('body').append("<div>ssssssssssssssssssssss</div>")
-console.log("vue:", Vue);
-console.log("vue-router:", Router)
-console.log("_:", _.chunk(['a', 'b', 'c', 'd'], 2));
+// console.log("vue:", Vue);
+// console.log("vue-router:", Router)
+// console.log("_:", _.chunk(['a', 'b', 'c', 'd'], 2));
 
 //asyn
-require(["@/vuetest.js"], (vuetest)=>{
+/* require(["@/vuetest.js"], (vuetest)=>{
     vuetest.default()
-});
+}); */
 
 //双向绑定
 var aaa = {
     v:0
 };
-console.log(aaa)
+// console.log(aaa)
 function callbackA(v){
-    console.log("callbackA aaa:", aaa.v);
+    // console.log("callbackA aaa:", aaa.v);
 }
-new Observer(aaa, callbackA);
+// new Observer(aaa, callbackA);
 
 let btnadd = document.getElementById("add");
 btnadd.onclick = function(){
@@ -64,19 +64,19 @@ btnadd.onclick = function(){
 };
 
 //表单验证策略
-let fd = new Formvalidation();
+/* let fd = new Formvalidation();
 fd.add('', {method:'isNoEmpty'}, '值不能为空');
 let fbs = fd.start((msg)=>{
-    console.log(msg)
-});
-console.log('表单验证策略 isNoEmpty:',fbs)
+    // console.log(msg)
+}); */
+// console.log('表单验证策略 isNoEmpty:',fbs)
 
 
 
 //worker
 let workerValueEl = document.getElementById("workerValue");
 workerValueEl.innerHTML = "Time goes by: 0 s";
-let worker;
+// let worker;
 function workerOn(event){
     // console.log("worker:"+event.data);
     workerValueEl.innerHTML = "Time goes by: "+parseInt(event.data/1000)+" s";
@@ -84,7 +84,7 @@ function workerOn(event){
 
 let workstart = document.getElementById("workstart");
 let workstop = document.getElementById("workstop");
-workstart.onclick = function(){
+/* workstart.onclick = function(){
     if(typeof(Worker)=="undefined"){
         alert("Sorry! No Web Worker support..");
         return
@@ -99,14 +99,68 @@ workstart.onclick = function(){
 workstop.onclick = function(){
     // if(worker) worker.postMessage("stop");
     worker.terminate();
-}
-console.log("index complete")
+} */
+// console.log("index complete")
 
 
 
 // console.log(window.location.href)
-console.log("query:", utils.getQueryString(window.location.href, 'p1'));
+// console.log("query:", utils.getQueryString(window.location.href, 'p1'));
 
 
-console.log("navigator:", navigator)
-console.log("caches:", caches)
+// console.log("navigator:", navigator)
+// console.log("caches:", caches)
+
+let spinner = document.querySelector('.loader');
+spinner.setAttribute('hidden', true);
+// setTimeout(()=>{
+//     spinner.removeAttribute('hidden');
+//     console.log(spinner)
+// }, 5000);
+
+
+/* serviceWorker */
+if (navigator.serviceWorker != null) {
+    navigator.serviceWorker.register('service-worker.js')
+    .then((registration) => {
+        // console.log(navigator.serviceWorker)
+        console.log("Service Worker Registered:",registration);
+        httpSend("/images/fog.png");
+    }).catch((error)=>{
+        console.log("Service Worker Register error:", error);
+    });
+
+}
+
+function httpSend(_url){
+    let url = _url;
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', url);
+    xhr.responseType = 'blob';
+    xhr.onreadystatechange = function() {
+      if (xhr.readyState === XMLHttpRequest.DONE) {
+        if (xhr.status === 200) {
+            console.log("xhr.status:", xhr.status)
+            //var response = JSON.parse(request.response);
+            let response = xhr.response;
+            let objectURL = URL.createObjectURL(response);
+            let myImage = new Image();
+            myImage.src = objectURL;
+            document.getElementById("cachediv").appendChild(myImage);
+        }
+      }
+    };
+    xhr.error = function(){
+        console.log("xhr error:", request)
+    }
+    console.log("xhr send:", url)
+    xhr.send();
+}
+
+/* setTimeout(()=>{
+    httpSend("/images/fog.png");
+}, 3000); */
+
+document.getElementById('butRefresh').addEventListener('click', function() {
+    httpSend("/images/rain.png");
+});

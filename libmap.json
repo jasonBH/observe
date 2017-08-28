@@ -10,5 +10,6 @@
     "pathHtml":"/entries/*.html",
     "pathJs":"/entries/*.js",
     "pathTs":"/entries/*.ts",
-    "pathStatic":"/static"
+    "pathStatic":"/static",
+    "pathServiceWorkers":"/serviceworkers"
 }
