@@ -39,12 +39,24 @@ var entries = function(){
     }
     return map;
 }
+var sws = function(){
+    var eSWlist = glob.sync(PATH_src+libmap.pathServiceWorkers);
+    var map = {};
+    for(var i=0; i<eSWlist.length; i++){
+        var filePath = eSWlist[i];
+        // console.log(filePath)
+        var fileName = filePath.substring(filePath.lastIndexOf('\/')+1, filePath.lastIndexOf('.'));
+        map[fileName] = filePath;
+    }
+    return map;
+}
 
 //pulgins
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const ExtractTextWebpackPlugin = require('extract-text-webpack-plugin');
-const CopyWebpackPlugin = require('copy-webpack-plugin')
+const CopyWebpackPlugin = require('copy-webpack-plugin');
+const ServiceWorkerWebpackPlugin = require('serviceworker-webpack-plugin');
 
 var plugins = [];
 
@@ -88,30 +100,30 @@ plugins.push(
         ignore: ['.*']
       }
     ]),
-    new CopyWebpackPlugin([
-        {
-          from: PATH_src+libmap.pathServiceWorkers,
-          to: out_bin,
-          ignore: ['.*']
-        }
-      ])
+    //service worker
+    new ServiceWorkerWebpackPlugin({
+        entry: PATH_src+libmap.pathServiceWorkers,
+        filename: "sw.js",
+        includes: ['**/*'],
+        excludes: ['**/.*', '**/*.map'],
+    })
 );
 //生产环境 清除/压缩
 if(isDev==false){
-    plugins.push(
+    plugins.unshift(
+        new CleanWebpackPlugin(PATH_bin, PATH_root),
         new webpack.optimize.UglifyJsPlugin({
             sourceMap: true
-        }),
-        new CleanWebpackPlugin(PATH_bin, PATH_root)
+        })
     );
 }
 //打包的库
-/*  plugins.push(
+/* plugins.push(
     new webpack.ProvidePlugin({"$":"jquery", "jQuery":"jquery"}),
-    new webpack.ProvidePlugin({"_":"lodash"}),
+    new webpack.ProvidePlugin({"_":"lodash"})
     new webpack.ProvidePlugin({"Vue":"vue"})
-)
- */
+) */
+
 
 
 // console.log(entries())
@@ -185,9 +197,12 @@ var config = {
     resolve: {
         modules: [PATH_root+"/node_modules/", PATH_src],
         extensions: ['.js', '.ts', '.vue', '.css', '.scss', '.png', '.jpg', '.gif'],
-        alias: Object.assign(libmap.lib,{
-            "@":PATH_src,
-        })
+        alias: Object.assign(
+            libmap.lib,
+            {
+                "@":PATH_src,
+            }
+        )
     },
     externals:{
 

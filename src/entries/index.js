@@ -1,10 +1,10 @@
 /* css */
-import './index.scss';
-import '@/assets/style/inline.css'
+import '@/assets/style/index.scss';
+import '@/assets/style/inline.css';
 /* plugins */
 import 'babel-polyfill';
 
-/* libs */
+/* npm i libs */
 import 'expose-loader?jQuery!expose-loader?$!jquery';
 import "expose-loader?_!lodash";
 import Vue from 'vue';
@@ -17,10 +17,11 @@ FastClick.attach(document.body);
 import utils from '@/lib/Utils.js';
 window.utils = utils;
 
+/* service worker */
+import swruntime from 'serviceworker-webpack-plugin/lib/runtime';
 
-
-// import {Observer} from '@/observer.js';
-// import {Formvalidation} from '@/lib/VerifyPolicy.js';
+import {Observer} from '@/observer.js';
+import {Formvalidation} from '@/lib/VerifyPolicy.js';
 
 
 
@@ -29,16 +30,16 @@ window.utils = utils;
 document.documentElement.style.fontSize = document.documentElement.clientWidth / 7.5 + 'px';
 
 
-// console.log("index start");
-$('body').append("<div>ssssssssssssssssssssss</div>")
-// console.log("vue:", Vue);
-// console.log("vue-router:", Router)
-// console.log("_:", _.chunk(['a', 'b', 'c', 'd'], 2));
+console.log("-----------------> index start");
+console.log("-----------------> vue:", Vue);
+console.log("-----------------> vue-router:", Router)
+console.log("-----------------> _:", _.chunk(['a', 'b', 'c', 'd'], 2));
+console.log("-----------------> jquery:", $)
 
 //asyn
-/* require(["@/vuetest.js"], (vuetest)=>{
+require(["@/vuetest.js"], (vuetest)=>{
     vuetest.default()
-}); */
+});
 
 //双向绑定
 var aaa = {
@@ -120,17 +121,18 @@ spinner.setAttribute('hidden', true);
 
 
 /* serviceWorker */
-if (navigator.serviceWorker != null) {
-    navigator.serviceWorker.register('service-worker.js')
+if('serviceWorker' in navigator){
+    const registration = swruntime.register()
     .then((registration) => {
-        // console.log(navigator.serviceWorker)
-        console.log("Service Worker Registered:",registration);
+        console.log("index => Service Worker Registered:",registration);
         httpSend("/images/fog.png");
     }).catch((error)=>{
-        console.log("Service Worker Register error:", error);
+        console.log("index => Service Worker Register error:", error);
     });
-
-}
+    console.log("index => Service Worker runtime:", swruntime, registration)
+  } else {
+    console.log('index => serviceWorker not available')
+  }
 
 function httpSend(_url){
     let url = _url;

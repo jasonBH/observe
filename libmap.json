@@ -1,8 +1,6 @@
 {
     "lib": {
-        "jquery": "jquery",
-        "vue": "vue",
-        "lodash": "lodash"
+
     },
     "vendor": ["jquery", "vue", "lodash"],
     "minChunks": 2,
@@ -11,5 +9,5 @@
     "pathJs":"/entries/*.js",
     "pathTs":"/entries/*.ts",
     "pathStatic":"/static",
-    "pathServiceWorkers":"/serviceworkers"
+    "pathServiceWorkers":"/serviceworkers/index.js"
 }
