@@ -35,6 +35,7 @@ console.log("-----------------> vue:", Vue);
 console.log("-----------------> vue-router:", Router)
 console.log("-----------------> _:", _.chunk(['a', 'b', 'c', 'd'], 2));
 console.log("-----------------> jquery:", $)
+$('body').append("<div>juquery test</div>")
 
 //asyn
 require(["@/vuetest.js"], (vuetest)=>{

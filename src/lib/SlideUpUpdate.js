@@ -221,11 +221,15 @@
             if(dom==this.el){
                 return true;
             }else{
-                if(dom.parentNode==document.body){
-                    // console.log("找到body啦");
-                    return false;
+                if(dom.parentNode){
+                    if(dom.parentNode==document.body){
+                        // console.log("找到body啦");
+                        return false;
+                    }else{
+                        return this.judgeParentIsSelf(dom.parentNode);
+                    }
                 }else{
-                    return this.judgeParentIsSelf(dom.parentNode);
+                    return false;
                 }
             }
         },
