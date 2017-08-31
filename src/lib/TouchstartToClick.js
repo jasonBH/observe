@@ -1,3 +1,4 @@
+/* global */
 export default {
     isClick:true,
     callBack:null,
@@ -33,6 +34,7 @@ export default {
             document.body.removeEventListener('touchend', this.bindlist.touchEnd);
             this.isClick = false;
             this.callBack = null;
+            this.bindlist = {};
         },50);
     },
 }

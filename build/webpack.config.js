@@ -8,12 +8,15 @@ var PATH_bindev = path.resolve(PATH_root, './bin_dev');
 var PATH_bin = path.resolve(PATH_root, './bin');
 var PATH_nodeMod = path.resolve(PATH_root, './node_modules');
 
+console.log("PATH_src:"+PATH_src+"\n")
+
 // production | development
 var NODE_ENV = process.env.NODE_ENV;
 var isDev = NODE_ENV=="development";
 console.log("env:", NODE_ENV);
 var minimist = require('minimist');
 console.log("run parameter:", minimist(process.argv).dev);
+
 
 
 var libmap = require(PATH_root+'/libmap.json');
@@ -57,6 +60,8 @@ const CleanWebpackPlugin = require('clean-webpack-plugin');
 const ExtractTextWebpackPlugin = require('extract-text-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const ServiceWorkerWebpackPlugin = require('serviceworker-webpack-plugin');
+const testPlugin = require('./FileInfoPlugin');
+const WebpackManifest = require('./custom_modules/webpack-manifest');
 
 var plugins = [];
 
@@ -106,6 +111,11 @@ plugins.push(
         filename: "sw.js",
         includes: ['**/*'],
         excludes: ['**/.*', '**/*.map'],
+    }),
+    // new testPlugin()
+    new WebpackManifest({
+        filename:path.resolve(PATH_root, './src/serviceworkers/manifest.json'),
+        templatename:path.resolve(PATH_root, './src/entries/index.html')
     })
 );
 //生产环境 清除/压缩
