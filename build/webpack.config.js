@@ -55,12 +55,12 @@ var sws = function(){
 }
 
 //pulgins
+const testPlugin = require('./custom_modules/FileInfoPlugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const ExtractTextWebpackPlugin = require('extract-text-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const ServiceWorkerWebpackPlugin = require('serviceworker-webpack-plugin');
-const testPlugin = require('./FileInfoPlugin');
 const WebpackManifest = require('./custom_modules/webpack-manifest');
 
 var plugins = [];
@@ -114,8 +114,9 @@ plugins.push(
     }),
     // new testPlugin()
     new WebpackManifest({
-        filename:path.resolve(PATH_root, './src/serviceworkers/manifest.json'),
-        templatename:path.resolve(PATH_root, './src/entries/index.html')
+        manifestSource:PATH_src+"/serviceworkers/manifest.json",
+        manifestTarget:"manifest.json",
+        templateTarget:"index.html"
     })
 );
 //生产环境 清除/压缩
@@ -136,7 +137,7 @@ if(isDev==false){
 
 
 
-// console.log(entries())
+
 var config = {
     entry:Object.assign(entries(), {
         vendor:libmap.vendor
@@ -218,6 +219,7 @@ var config = {
 
     },
 }
+// console.log("config:",JSON.stringify(config))
 // module.exports = config;
 const compiler = webpack(config);
 if(isDev){
