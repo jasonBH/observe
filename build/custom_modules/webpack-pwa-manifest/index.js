@@ -1,7 +1,7 @@
 const path = require('path');
 const fs = require('fs');
 
-class WebpackManifest {
+class WebpackPWAManifest {
     constructor(options){
         let defaultOptions = {
             manifestSource:'manifest.json',
@@ -50,4 +50,4 @@ class WebpackManifest {
     }
 }
 
-module.exports = WebpackManifest
+module.exports = WebpackPWAManifest;

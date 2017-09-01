@@ -61,7 +61,7 @@ const CleanWebpackPlugin = require('clean-webpack-plugin');
 const ExtractTextWebpackPlugin = require('extract-text-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const ServiceWorkerWebpackPlugin = require('serviceworker-webpack-plugin');
-const WebpackManifest = require('./custom_modules/webpack-manifest');
+const WebpackPWAManifest = require('./custom_modules/webpack-pwa-manifest');
 
 var plugins = [];
 
@@ -113,7 +113,7 @@ plugins.push(
         excludes: ['**/.*', '**/*.map'],
     }),
     // new testPlugin()
-    new WebpackManifest({
+    new WebpackPWAManifest({
         manifestSource:PATH_src+"/serviceworkers/manifest.json",
         manifestTarget:"manifest.json",
         templateTarget:"index.html"
