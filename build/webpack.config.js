@@ -115,7 +115,7 @@ plugins.push(
     // new testPlugin()
     new WebpackPWAManifest({
         manifestSource:PATH_src+"/serviceworkers/manifest.json",
-        manifestTarget:"manifest.json",
+        manifestTarget:"manifest.[chunkhash].json",
         templateTarget:"index.html"
     })
 );
@@ -160,8 +160,9 @@ var config = {
                 }
             },
             {
-                test:/\.ts$/,
+                test:/\.tsx$/,
                 loader:'ts-loader',
+                exclude: /node_modules/,
                 options:{
                     appendTsSuffixTo: [/\.vue$/]//<script lang="ts">
                 }
@@ -207,7 +208,7 @@ var config = {
     plugins:plugins,
     resolve: {
         modules: [PATH_root+"/node_modules/", PATH_src],
-        extensions: ['.js', '.ts', '.vue', '.css', '.scss', '.png', '.jpg', '.gif'],
+        extensions: ['.js', '.ts', '.tsx', '.vue', '.css', '.scss', '.png', '.jpg', '.gif'],
         alias: Object.assign(
             libmap.lib,
             {

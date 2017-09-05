@@ -24,8 +24,7 @@ import {Observer} from '@/observer.js';
 import {Formvalidation} from '@/lib/VerifyPolicy.js';
 
 
-
-
+// console.log()
 
 document.documentElement.style.fontSize = document.documentElement.clientWidth / 7.5 + 'px';
 
