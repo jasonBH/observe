@@ -23,12 +23,10 @@ class WebpackPWAManifest {
         });
 
         compiler.plugin('compilation', (compilation) => {
-            //after: html-webpack-plugin-after-html-processing
             compilation.plugin('html-webpack-plugin-before-html-processing', (htmlPluginData, callback)=>{
                 if(htmlPluginData.outputName==this.options.templateTarget){
                     // copy manifest.json
                     let targetname = this.manifestCopy(compilation, this.options.manifestSource, this.options.manifestTarget);
-
                     //<!--link rel="manifest" href="static/manifest.json"-->
                     let linkmanifest = '<link rel="manifest" href="'+targetname+'">';
                     htmlPluginData.html = htmlPluginData.html.replace(
@@ -47,26 +45,19 @@ class WebpackPWAManifest {
     }
 
     manifestCopy(compilation, source, target){
-        let content = fs.readFileSync(source);
+        let content = fs.readFileSync(source, 'utf8');
         compilation.fileDependencies.push(source);
 
-        /* var outputName = compilation.mainTemplate.applyPluginsWaterfall('asset-path', target, {
-            hash: compilation.hash,
-            chunk:{
-                id:compilation.hash,
-                name:target,
-                hash:compilation.hash,
-                hashWithLength:content.length
-            },
-            filename:target,
-            basename:source
-        }); */
+        this.manifestIconHandler(compilation, content);
 
-        let hash = crypto.createHash('md5');
-        hash.update(content);
-        let r = hash.digest('hex');
-        let outputName = target.replace('[chunkhash]', r);
-        console.log("manifest chunkhash===========>", outputName)
+        let outputName = target;
+        if(outputName.indexOf("[chunkhash]")>-1){
+            let hash = crypto.createHash('md5');
+            hash.update(content);
+            let r = hash.digest('hex');
+            outputName = outputName.replace('[chunkhash]', r);
+            // console.log("manifest chunkhash===========>", outputName)
+        }
 
         compilation.assets[outputName] = {
             source: ()=>{
@@ -77,6 +68,15 @@ class WebpackPWAManifest {
             }
         };
         return outputName;
+    }
+    manifestIconHandler(compilation, _content){
+        let content = JSON.parse(_content);
+        if(content.icons){
+            for(let i=0; i<content.icons.length; i++){
+                let icon = content.icons[i];
+                console.log("========icon:", path.resolve(__dirname, icon.src))
+            }
+        }
     }
 }
 

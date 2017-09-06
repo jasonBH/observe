@@ -1,13 +1,18 @@
 {
     "lib": {
-
+        "vue$": "vue/dist/vue.esm.js"
     },
-    "vendor": ["jquery", "vue", "lodash"],
-    "minChunks": 2,
-    "favicon":"/assets/images/fish3.png",
-    "pathHtml":"/entries/*.html",
-    "pathJs":"/entries/*.js",
-    "pathTs":"/entries/*.ts",
-    "pathStatic":"/static",
-    "pathServiceWorkers":"/serviceworkers/index.js"
+    "favicon":"./assets/images/fish3.png",
+    "pathHtml":"./entries/*.html",
+    "pathJs":"./entries/*.js",
+    "pathTs":"./entries/*.ts",
+    "pathStatic":"./static",
+    "pathServiceWorkers":"./serviceworkers/index.js",
+    "WebpackSinglePlugin":[
+        {
+            "template":"index.html",
+            "source":"../node_modules/vue/dist/vue.min.js",
+            "target":"static/vue.min.js"
+        }
+    ]
 }

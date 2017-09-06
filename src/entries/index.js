@@ -2,26 +2,26 @@
 import '@/assets/style/index.scss';
 import '@/assets/style/inline.css';
 /* plugins */
-import 'babel-polyfill';
+// import 'babel-polyfill';
 
 /* npm i libs */
-import 'expose-loader?jQuery!expose-loader?$!jquery';
-import "expose-loader?_!lodash";
-import Vue from 'vue';
+// import 'expose-loader?jQuery!expose-loader?$!jquery';
+// import "expose-loader?_!lodash";
+// import Vue from 'vue';
 import Router from 'vue-router';
 import FastClick from 'fastclick'
 FastClick.attach(document.body);
 
 
 /* tools */
-import utils from '@/lib/Utils.js';
+import utils from '@/lib_custom/Utils.js';
 window.utils = utils;
 
 /* service worker */
 import swruntime from 'serviceworker-webpack-plugin/lib/runtime';
 
 import {Observer} from '@/observer.js';
-import {Formvalidation} from '@/lib/VerifyPolicy.js';
+import {Formvalidation} from '@/lib_custom/VerifyPolicy.js';
 
 
 // console.log()
@@ -32,9 +32,9 @@ document.documentElement.style.fontSize = document.documentElement.clientWidth /
 console.log("-----------------> index start");
 console.log("-----------------> vue:", Vue);
 console.log("-----------------> vue-router:", Router)
-console.log("-----------------> _:", _.chunk(['a', 'b', 'c', 'd'], 2));
-console.log("-----------------> jquery:", $)
-$('body').append("<div>juquery test</div>")
+// console.log("-----------------> _:", _.chunk(['a', 'b', 'c', 'd'], 2));
+// console.log("-----------------> jquery:", $)
+// $('body').append("<div>juquery test</div>")
 
 //asyn
 require(["@/vuetest.js"], (vuetest)=>{

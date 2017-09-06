@@ -18,9 +18,13 @@ var minimist = require('minimist');
 console.log("run parameter:", minimist(process.argv).dev);
 
 
-
+/* 以 src 目录为基准 */
 var libmap = require(PATH_root+'/libmap.json');
 console.log("libmap:", libmap)
+var getPathToSrc = function(_path){
+    return path.resolve(PATH_src, _path);
+}
+
 
 //输出目录
 var out_bin = isDev ? PATH_bindev : PATH_bin;
@@ -30,23 +34,12 @@ var out_hash = isDev ? "" : ".[hash]";
 
 //entry
 var entries = function(){
-    var entryTSs = glob.sync(PATH_src+libmap.pathTs);
-    var entryJSs = glob.sync(PATH_src+libmap.pathJs);
+    var entryTSs = glob.sync(getPathToSrc(libmap.pathTs));
+    var entryJSs = glob.sync(getPathToSrc(libmap.pathJs));
     var entryList = entryTSs.concat(entryJSs);
     var map = {};
     for(var i=0; i<entryList.length; i++){
         var filePath = entryList[i];
-        // console.log(filePath)
-        var fileName = filePath.substring(filePath.lastIndexOf('\/')+1, filePath.lastIndexOf('.'));
-        map[fileName] = filePath;
-    }
-    return map;
-}
-var sws = function(){
-    var eSWlist = glob.sync(PATH_src+libmap.pathServiceWorkers);
-    var map = {};
-    for(var i=0; i<eSWlist.length; i++){
-        var filePath = eSWlist[i];
         // console.log(filePath)
         var fileName = filePath.substring(filePath.lastIndexOf('\/')+1, filePath.lastIndexOf('.'));
         map[fileName] = filePath;
@@ -62,11 +55,22 @@ const ExtractTextWebpackPlugin = require('extract-text-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const ServiceWorkerWebpackPlugin = require('serviceworker-webpack-plugin');
 const WebpackPWAManifest = require('./custom_modules/webpack-pwa-manifest');
+const WebpackSinglePlugin = require('./custom_modules/webpack-single-plugin');
+var WebpackSinglePluginConfig = [];
+if(libmap["WebpackSinglePlugin"]){
+    libmap["WebpackSinglePlugin"].forEach((_obj)=>{
+        let newobj = {};
+        newobj.template = _obj.template;
+        newobj.source = getPathToSrc(_obj.source);
+        newobj.target = _obj.target;
+        WebpackSinglePluginConfig.push(newobj);
+    });
+}
 
 var plugins = [];
 
 var plugin_html = function(){
-    var ehtmllist = glob.sync(PATH_src+libmap.pathHtml);
+    var ehtmllist = glob.sync(getPathToSrc(libmap.pathHtml));
     var plus = [];
     var entriesFiles = entries();
     for(var i=0; i<ehtmllist.length; i++){
@@ -78,36 +82,42 @@ var plugin_html = function(){
         }
         if(fileName in entriesFiles){
             conf.inject = 'body';
-            conf.chunks = ["vendor", "common", fileName];
+            conf.chunks = ["common", fileName];
         }
-        conf.favicon = PATH_src+libmap.favicon;
+        conf.favicon = getPathToSrc(libmap.favicon);
         plus.push(new HtmlWebpackPlugin(conf));
     }
     return plus;
 }
 plugins = plugins.concat(plugin_html());
 
-
+//暴露的库
+// plugins.push(
+    // new webpack.ProvidePlugin({"$":"jquery", "jQuery":"jquery"}),
+    // new webpack.ProvidePlugin({"_":"lodash"})
+    // new webpack.ProvidePlugin({"Vue":"vue"})
+// )
 plugins.push(
     //抽取公共库/代码，配合entry使用//页面上使用的时候最后一个会块最先加载,其它依次加载
     new webpack.optimize.CommonsChunkPlugin({
-        "names": ["common", "vendor"],
-        "filename": "[name]"+out_chunkhash+".js",
-        minChunks:libmap.minChunks
+        "names": ["common"],
+        "filename": "entry/[name]"+out_chunkhash+".js",
+        minChunks: function (module, count) {
+            // any required modules inside node_modules are extracted to common
+            return (
+              module.resource &&
+              /\.js$/.test(module.resource) &&
+              module.resource.indexOf(
+                path.join(__dirname, '../node_modules')
+              ) === 0
+            )
+        }
     }),
     //抽取css
     new ExtractTextWebpackPlugin("css/[name]"+out_chunkhash+".css"),
-    //复制
-    new CopyWebpackPlugin([
-      {
-        from: PATH_src+libmap.pathStatic,
-        to: out_bin+libmap.pathStatic,
-        ignore: ['.*']
-      }
-    ]),
     //service worker
     new ServiceWorkerWebpackPlugin({
-        entry: PATH_src+libmap.pathServiceWorkers,
+        entry: getPathToSrc(libmap.pathServiceWorkers),
         filename: "sw.js",
         includes: ['**/*'],
         excludes: ['**/.*', '**/*.map'],
@@ -115,10 +125,19 @@ plugins.push(
     // new testPlugin()
     new WebpackPWAManifest({
         manifestSource:PATH_src+"/serviceworkers/manifest.json",
-        manifestTarget:"manifest.[chunkhash].json",
+        manifestTarget:"manifest"+out_chunkhash+".json",
         templateTarget:"index.html"
-    })
-);
+    }),
+    new WebpackSinglePlugin(WebpackSinglePluginConfig),
+    //复制目录/文件
+    new CopyWebpackPlugin([
+        {
+          from: getPathToSrc(libmap.pathStatic),
+          to: path.resolve(out_bin, libmap.pathStatic),
+          ignore: ['.*']
+        }
+    ])
+  );
 //生产环境 清除/压缩
 if(isDev==false){
     plugins.unshift(
@@ -128,23 +147,18 @@ if(isDev==false){
         })
     );
 }
-//打包的库
-/* plugins.push(
-    new webpack.ProvidePlugin({"$":"jquery", "jQuery":"jquery"}),
-    new webpack.ProvidePlugin({"_":"lodash"})
-    new webpack.ProvidePlugin({"Vue":"vue"})
-) */
+
 
 
 
 
 var config = {
     entry:Object.assign(entries(), {
-        vendor:libmap.vendor
+
     }),
     output:{
         path:out_bin,
-        filename:'[name]'+out_chunkhash+'.js',
+        filename:'entry/[name]'+out_chunkhash+'.js',
         chunkFilename:'modules/[name]'+out_chunkhash+'.js',
         publicPath:'/',
     },
@@ -162,7 +176,6 @@ var config = {
             {
                 test:/\.tsx$/,
                 loader:'ts-loader',
-                exclude: /node_modules/,
                 options:{
                     appendTsSuffixTo: [/\.vue$/]//<script lang="ts">
                 }
@@ -170,10 +183,8 @@ var config = {
             {
                 test:/\.js$/,
                 exclude:[PATH_nodeMod],
-                loader:"babel-loader",
-                options:{
-                    presets:"es2015"
-                }
+                include: [PATH_src],
+                loader:"babel-loader"
             },
             {
                 test: /\.css$/,
@@ -208,7 +219,7 @@ var config = {
     plugins:plugins,
     resolve: {
         modules: [PATH_root+"/node_modules/", PATH_src],
-        extensions: ['.js', '.ts', '.tsx', '.vue', '.css', '.scss', '.png', '.jpg', '.gif'],
+        extensions: ['.js', '.ts', '.tsx', '.vue', '.css', '.scss', '.png', '.jpg', '.gif', '.json'],
         alias: Object.assign(
             libmap.lib,
             {
