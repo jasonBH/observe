@@ -10,13 +10,6 @@
     "pathTs":"./entries/*.ts",
     "pathStatic":"./static",
     "pathServiceWorkers":"./serviceworkers/index.js",
-    "WebpackSinglePlugin":[
-        {
-            "template":"index.html",
-            "source":"../node_modules/vue/dist/vue.min.js",
-            "target":"static/vue.min.js"
-        }
-    ],
     "WebpackPWAManifest":{
         "template":"index.html",
         "source":"./serviceworkers/manifest.json",

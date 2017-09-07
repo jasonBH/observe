@@ -14,14 +14,14 @@ FastClick.attach(document.body);
 
 
 /* tools */
-import utils from '@/lib_custom/Utils.js';
+import utils from '@/module/utils/Utils.js';
 window.utils = utils;
 
 /* service worker */
 import swruntime from 'serviceworker-webpack-plugin/lib/runtime';
 
 import {Observer} from '@/observer.js';
-import {Formvalidation} from '@/lib_custom/VerifyPolicy.js';
+import {Formvalidation} from '@/module/utils/VerifyPolicy.js';
 
 
 // console.log()

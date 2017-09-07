@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- TODO add manifest here -->
     <!-- Add to home screen for Safari on iOS -->
@@ -11,35 +11,34 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <meta name="apple-mobile-web-app-title" content="observe test">
     <meta name="msapplication-TileColor" content="#2F3BA2">
+    <!-- 针对手持设备优化，主要是针对一些老的不识别viewport的浏览器，比如黑莓 -->
+    <meta name="HandheldFriendly" content="true">
+    <!-- 微软的老式浏览器 -->
+    <meta name="MobileOptimized" content="320">
+    <!-- uc强制竖屏 -->
+    <meta name="screen-orientation" content="portrait">
+    <!-- QQ强制竖屏 -->
+    <meta name="x5-orientation" content="portrait">
+    <!-- UC强制全屏 -->
+    <meta name="full-screen" content="yes">
+    <!-- QQ强制全屏 -->
+    <meta name="x5-fullscreen" content="true">
+    <!-- UC应用模式 -->
+    <meta name="browsermode" content="application">
+    <!-- QQ应用模式 -->
+    <meta name="x5-page-mode" content="app">
+    <!-- windows phone 点击无高光 -->
+    <meta name="msapplication-tap-highlight" content="no">
+    <!--转码申明-->
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+
     <title>observe test</title>
 </head>
 
 <body>
-    <header class="header" style="background:3f51b5; height:50px;">
-      <h1 class="header__title">Weather PWA</h1>
-      <button id="butRefresh" class="headerButton" aria-label="Refresh"></button>
-      <button id="butAdd" class="headerButton" aria-label="Add"></button>
-    </header>
+    <div id="app">
 
-
-    <div class="loader">
-      <svg viewBox="0 0 32 32" width="32" height="32">
-        <circle id="spinner" cx="16" cy="16" r="14" fill="none"></circle>
-      </svg>
     </div>
-
-
-    <div id="cachediv"></div>
-    <div id="nocachediv"><img src="../assets/images/cloudy.png" /></div>
-    <div>
-        <div id="info" style="height:50px; line-height:50px; border:1px solid #cc00ff">
-            <span>A:</span><span id="avalue"></span><span id="workerValue" style="width:100px; border:1px solid; margin-left:50px; padding:5px 10px;"></span>
-        </div>
-        <a href="javascript:void(0);" onclick="" id="getA">get A</a><a href="javascript:void(0);" id="add">A++</a>
-        <p><a href="javascript:void(0);" id="workstart">workerStart</a><a href="javascript:void(0);" id="workstop">workerStop</a></p>
-    </div>
-
-
 </body>
 
 </html>

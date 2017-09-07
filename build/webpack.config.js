@@ -130,7 +130,16 @@ if(pathmap["WebpackPWAManifest"]){
     _config.target = _config.target.replace(".json", out_chunkhash+".json");
     plugins.push(new WebpackPWAManifest(_config));
 }
-if(pathmap["WebpackSinglePlugin"]){
+/*
+"WebpackSinglePlugin":[
+        {
+            "template":"index.html",
+            "source":"../node_modules/vue/dist/vue.min.js",
+            "target":"static/vue.min.js"
+        }
+    ],
+ */
+if(pathmap["WebpackSinglePlugin"] && pathmap["WebpackSinglePlugin"].length>0){
     let _config = [];
     pathmap["WebpackSinglePlugin"].forEach((_obj)=>{
         let newobj = {};
@@ -167,18 +176,18 @@ var config = {
         publicPath:'/',
     },
     module:{
-        // noParse:'//',
+        // noParse:'/vue/',
         rules:[
             {
                 test: /\.vue$/,
                 loader:'vue-loader',
                 options:{
                     // loaders: { js: 'vue-ts-loader' },
-                    // esModule: true
+                    esModule: true
                 }
             },
             {
-                test:/\.tsx$/,
+                test:/\.ts$/,
                 loader:'ts-loader',
                 options:{
                     appendTsSuffixTo: [/\.vue$/]//<script lang="ts">
@@ -223,7 +232,7 @@ var config = {
     plugins:plugins,
     resolve: {
         modules: [PATH_root+"/node_modules/", PATH_src],
-        extensions: ['.js', '.ts', '.tsx', '.vue', '.css', '.scss', '.png', '.jpg', '.gif', '.json'],
+        extensions: ['.js', '.ts', '.ts', '.vue', '.css', '.scss', '.png', '.jpg', '.gif', '.json'],
         alias: Object.assign(
             pathmap.lib,
             {
@@ -232,7 +241,7 @@ var config = {
         )
     },
     externals:{
-
+        Vue:"Vue"
     },
 }
 // console.log("config:",JSON.stringify(config))
