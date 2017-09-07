@@ -1,3 +1,13 @@
+/*
+@param  [
+            {
+                "template":"index.html", //目标模板名称
+                "source":"../node_modules/vue/dist/vue.min.js",//加载的lib全名
+                "target":"static/vue.min.js"//生成的lib全名
+            }
+        ]
+*/
+
 const path = require('path');
 const fs = require('fs');
 

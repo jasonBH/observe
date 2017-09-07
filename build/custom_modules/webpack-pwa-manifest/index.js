@@ -1,3 +1,12 @@
+/*
+@param  {
+            source:'manifest.json',//源文件全名
+            iconTarget:'',//生成的icon资源路径
+            target:'manifest.json',//生成的manifest文件全名
+            template:'index.html'//目标模板名称
+        }
+*/
+
 const path = require('path');
 const fs = require('fs');
 const crypto = require("crypto");
@@ -5,13 +14,12 @@ const crypto = require("crypto");
 class WebpackPWAManifest {
     constructor(options){
         let defaultOptions = {
-            manifestSource:'manifest.json',
-            manifestTarget:'manifest.json',
-            templateTarget:'index.html'
+            source:'manifest.json',
+            iconTarget:'',
+            target:'manifest.json',
+            template:'index.html'
         }
-        for(let key in options){
-            options[key] = options[key].replace(/\//g, '\\');
-        }
+        options.source = this.pathReplace(options.source);
         this.options = Object.assign(defaultOptions, options);
     }
 
@@ -24,9 +32,9 @@ class WebpackPWAManifest {
 
         compiler.plugin('compilation', (compilation) => {
             compilation.plugin('html-webpack-plugin-before-html-processing', (htmlPluginData, callback)=>{
-                if(htmlPluginData.outputName==this.options.templateTarget){
+                if(htmlPluginData.outputName==this.options.template){
                     // copy manifest.json
-                    let targetname = this.manifestCopy(compilation, this.options.manifestSource, this.options.manifestTarget);
+                    let targetname = this.manifestCopy(compilation, this.options.source, this.options.target);
                     //<!--link rel="manifest" href="static/manifest.json"-->
                     let linkmanifest = '<link rel="manifest" href="'+targetname+'">';
                     htmlPluginData.html = htmlPluginData.html.replace(
@@ -48,7 +56,7 @@ class WebpackPWAManifest {
         let content = fs.readFileSync(source, 'utf8');
         compilation.fileDependencies.push(source);
 
-        this.manifestIconHandler(compilation, content);
+        content = this.manifestIconHandler(compilation, content);
 
         let outputName = target;
         if(outputName.indexOf("[chunkhash]")>-1){
@@ -58,25 +66,42 @@ class WebpackPWAManifest {
             outputName = outputName.replace('[chunkhash]', r);
             // console.log("manifest chunkhash===========>", outputName)
         }
-
         compilation.assets[outputName] = {
-            source: ()=>{
-                return content;
-            },
-            size: ()=>{
-                return content.length;
-            }
+            source: () => content,
+            size: () => content.length
         };
         return outputName;
     }
+
+    /*
+    {
+        "src": "../assets/images/icons/icon-128x128.png",
+    }
+     */
     manifestIconHandler(compilation, _content){
         let content = JSON.parse(_content);
         if(content.icons){
             for(let i=0; i<content.icons.length; i++){
                 let icon = content.icons[i];
-                console.log("========icon:", path.resolve(__dirname, icon.src))
+                if(!icon.src) continue;
+                let basename = path.basename(icon.src);
+                let sourceName = path.resolve(path.dirname(this.options.source), icon.src);
+                let targetName = this.options.iconTarget+basename;
+                icon.src = targetName;
+
+                fs.readFile(sourceName, (error, data)=>{
+                    compilation.assets[targetName] = {
+                        source: () => data,
+                        size: () => data.length
+                    };
+                })
             }
         }
+        return JSON.stringify(content);
+    }
+
+    pathReplace(_path){
+        return _path.replace(/\//g, '\\');
     }
 }
 

@@ -19,8 +19,8 @@ console.log("run parameter:", minimist(process.argv).dev);
 
 
 /* 以 src 目录为基准 */
-var libmap = require(PATH_root+'/libmap.json');
-console.log("libmap:", libmap)
+var pathmap = require('./pathmap.json');
+console.log("pathmap:", pathmap)
 var getPathToSrc = function(_path){
     return path.resolve(PATH_src, _path);
 }
@@ -34,8 +34,8 @@ var out_hash = isDev ? "" : ".[hash]";
 
 //entry
 var entries = function(){
-    var entryTSs = glob.sync(getPathToSrc(libmap.pathTs));
-    var entryJSs = glob.sync(getPathToSrc(libmap.pathJs));
+    var entryTSs = glob.sync(getPathToSrc(pathmap.pathTs));
+    var entryJSs = glob.sync(getPathToSrc(pathmap.pathJs));
     var entryList = entryTSs.concat(entryJSs);
     var map = {};
     for(var i=0; i<entryList.length; i++){
@@ -56,21 +56,13 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 const ServiceWorkerWebpackPlugin = require('serviceworker-webpack-plugin');
 const WebpackPWAManifest = require('./custom_modules/webpack-pwa-manifest');
 const WebpackSinglePlugin = require('./custom_modules/webpack-single-plugin');
-var WebpackSinglePluginConfig = [];
-if(libmap["WebpackSinglePlugin"]){
-    libmap["WebpackSinglePlugin"].forEach((_obj)=>{
-        let newobj = {};
-        newobj.template = _obj.template;
-        newobj.source = getPathToSrc(_obj.source);
-        newobj.target = _obj.target;
-        WebpackSinglePluginConfig.push(newobj);
-    });
-}
+
+
 
 var plugins = [];
 
 var plugin_html = function(){
-    var ehtmllist = glob.sync(getPathToSrc(libmap.pathHtml));
+    var ehtmllist = glob.sync(getPathToSrc(pathmap.pathHtml));
     var plus = [];
     var entriesFiles = entries();
     for(var i=0; i<ehtmllist.length; i++){
@@ -84,7 +76,7 @@ var plugin_html = function(){
             conf.inject = 'body';
             conf.chunks = ["common", fileName];
         }
-        conf.favicon = getPathToSrc(libmap.favicon);
+        conf.favicon = getPathToSrc(pathmap.favicon);
         plus.push(new HtmlWebpackPlugin(conf));
     }
     return plus;
@@ -117,27 +109,39 @@ plugins.push(
     new ExtractTextWebpackPlugin("css/[name]"+out_chunkhash+".css"),
     //service worker
     new ServiceWorkerWebpackPlugin({
-        entry: getPathToSrc(libmap.pathServiceWorkers),
+        entry: getPathToSrc(pathmap.pathServiceWorkers),
         filename: "sw.js",
         includes: ['**/*'],
         excludes: ['**/.*', '**/*.map'],
     }),
-    // new testPlugin()
-    new WebpackPWAManifest({
-        manifestSource:PATH_src+"/serviceworkers/manifest.json",
-        manifestTarget:"manifest"+out_chunkhash+".json",
-        templateTarget:"index.html"
-    }),
-    new WebpackSinglePlugin(WebpackSinglePluginConfig),
     //复制目录/文件
     new CopyWebpackPlugin([
         {
-          from: getPathToSrc(libmap.pathStatic),
-          to: path.resolve(out_bin, libmap.pathStatic),
+          from: getPathToSrc(pathmap.pathStatic),
+          to: path.resolve(out_bin, pathmap.pathStatic),
           ignore: ['.*']
         }
     ])
-  );
+);
+
+if(pathmap["WebpackPWAManifest"]){
+    let _config = pathmap["WebpackPWAManifest"];
+    _config.source = getPathToSrc(_config.source);
+    _config.target = _config.target.replace(".json", out_chunkhash+".json");
+    plugins.push(new WebpackPWAManifest(_config));
+}
+if(pathmap["WebpackSinglePlugin"]){
+    let _config = [];
+    pathmap["WebpackSinglePlugin"].forEach((_obj)=>{
+        let newobj = {};
+        newobj.template = _obj.template;
+        newobj.source = getPathToSrc(_obj.source);
+        newobj.target = _obj.target;
+        _config.push(newobj);
+    });
+    plugins.push(new WebpackSinglePlugin(_config));
+}
+
 //生产环境 清除/压缩
 if(isDev==false){
     plugins.unshift(
@@ -221,7 +225,7 @@ var config = {
         modules: [PATH_root+"/node_modules/", PATH_src],
         extensions: ['.js', '.ts', '.tsx', '.vue', '.css', '.scss', '.png', '.jpg', '.gif', '.json'],
         alias: Object.assign(
-            libmap.lib,
+            pathmap.lib,
             {
                 "@":PATH_src,
             }

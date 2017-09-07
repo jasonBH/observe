@@ -1,4 +1,6 @@
 {
+    "#":"# 相对目录以src目录为基准",
+
     "lib": {
         "vue$": "vue/dist/vue.esm.js"
     },
@@ -14,5 +16,11 @@
             "source":"../node_modules/vue/dist/vue.min.js",
             "target":"static/vue.min.js"
         }
-    ]
+    ],
+    "WebpackPWAManifest":{
+        "template":"index.html",
+        "source":"./serviceworkers/manifest.json",
+        "target":"manifest.json",
+        "iconTarget":"images/icons/"
+    }
 }
