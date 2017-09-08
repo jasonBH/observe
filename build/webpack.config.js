@@ -54,6 +54,7 @@ const CleanWebpackPlugin = require('clean-webpack-plugin');
 const ExtractTextWebpackPlugin = require('extract-text-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const ServiceWorkerWebpackPlugin = require('serviceworker-webpack-plugin');
+const OptimizeCSSPlugin = require('optimize-css-assets-webpack-plugin');
 const WebpackPWAManifest = require('./custom_modules/webpack-pwa-manifest');
 const WebpackSinglePlugin = require('./custom_modules/webpack-single-plugin');
 
@@ -123,6 +124,7 @@ plugins.push(
         }
     ])
 );
+if(isDev==false) plugins.push(new OptimizeCSSPlugin());
 
 if(pathmap["WebpackPWAManifest"]){
     let _config = pathmap["WebpackPWAManifest"];

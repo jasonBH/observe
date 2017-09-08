@@ -1,19 +1,20 @@
+import '@/assets/style/index.scss';
+
 import Vue from 'vue';
 import router from "../router"
 
+import '../module/utils/rem';
+import '../module/utils/orientationchange';
+// import mixFun from '../module/utils/mixFun';
+import FastClick from 'fastclick';
+
+// Vue.mixin(mixFun);
+FastClick.attach(document.body);
+
+import '../module/utils/mixFun'
+console.log(Vue)
 
 import App from '@/module/App.vue'
-
-
-const evt = "onorientationchange" in window ? "orientationchange" : "resize";
-window.addEventListener(evt, function () {
-
-}, false);
-
-
-
-
-
 
 
 

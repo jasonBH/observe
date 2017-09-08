@@ -4,7 +4,7 @@
     </div>
 </template>
 <script lang="ts">
-import {Vue, Component} from "../components/baseVue"
+import {Vue, Component} from "../components/baseVue";
 
 @Component({
 
@@ -18,7 +18,9 @@ export default class Home extends Vue {
 
     //==================lifecycle hook
     mounted(){
-        console.log("Home mounted!")
+        console.log("Home mounted!");
+        // console.log((this as any).getDateStr(1))
+        console.log(this)
     }
 
 
