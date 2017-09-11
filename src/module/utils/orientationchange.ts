@@ -3,7 +3,6 @@ class orientationChange{
     constructor(){
         this.evt = "onorientationchangee" in window ? 'orientationchangee' : 'resize';
         window.addEventListener(this.evt, this.orientationHanlder, false);
-        console.log("???????????")
     }
     orientationHanlder(event:any):void{
         if(this.evt=="orientationchangee"){

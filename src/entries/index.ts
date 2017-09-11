@@ -1,29 +1,34 @@
+/* css */
 import '@/assets/style/index.scss';
 
+/* lib */
 import Vue from 'vue';
 import router from "../router"
-
-import '../module/utils/rem';
-import '../module/utils/orientationchange';
-// import mixFun from '../module/utils/mixFun';
 import FastClick from 'fastclick';
 
-// Vue.mixin(mixFun);
+/* 自动执行脚本 */
+import '../module/utils/rem';
+import '../module/utils/orientationchange';
+import '../module/utils/Components';
+import '../module/utils/mixFun';
+
+/* 组件 */
+import App from '@/module/App.vue';
+
+/* test */
+import testClass from '../test/externalLib/testlib'
+let tc = new testClass();
+
+
+
 FastClick.attach(document.body);
-
-import '../module/utils/mixFun'
-console.log(Vue)
-
-import App from '@/module/App.vue'
-
-
-
-
-
 
 let vm = (window as any).vm = new Vue({
     router:router,
-    render: h => h(App)
+    render: h => h(App),
+    data : {
+        eventHub : new Vue(),
+    }
 })
 
 vm.$mount('#app');

@@ -2,9 +2,14 @@ import Vue from 'vue';
 
 const mixFun = {
     methods:{
+        //气泡提示
+        mixBubble (msg,callback){
+            this.$root.eventHub.$emit('showAlert',msg,callback);
+        },
+
         //=========================================时间处理
         // 获取距今天dayCount天后的日期 "yy-mm-dd"
-        getDateStr(dayCount):String{
+        getDateStr(dayCount:number):string{
             var dd = new Date();
             dd.setDate(dd.getDate() + dayCount);
             var y = dd.getFullYear();
@@ -13,7 +18,7 @@ const mixFun = {
             return y + "-" + (m > 9 ? m : ('0' + m)) + "-" + (d > 9 ? d : ('0' + d));
         },
         // "yy-mm-dd"转日期
-        getDateByStr(_str):Date{
+        getDateByStr(_str:string):Date{
             return new Date(Date.parse(_str.replace(/-/g, "/")));
         },
         /* 列表排序： */
@@ -28,7 +33,7 @@ const mixFun = {
             }
         },
         //深度克隆
-        deepClone(obj):any{
+        deepClone(obj:object):any{
             var str, newobj = obj.constructor === Array ? [] : {};
             if(typeof obj !== 'object'){
                 return null;
@@ -44,7 +49,7 @@ const mixFun = {
             return newobj;
         },
         //obj判断类型：返回传递给他的任意对象的类
-        isClass(o):any{
+        isClass(o:any):any{
             if(o===null) return "Null";
             if(o===undefined) return "Undefined";
             return Object.prototype.toString.call(o).slice(8,-1);
@@ -68,7 +73,7 @@ const mixFun = {
             }
         },
         /* obj判断是否为空{} */
-        isEmptyObject(e):Boolean{
+        isEmptyObject(e:object):boolean{
             var t;
             for (t in e)
                 return !1;
@@ -77,4 +82,4 @@ const mixFun = {
     }
 }
 
-export default mixFun;
+Vue.mixin(mixFun);

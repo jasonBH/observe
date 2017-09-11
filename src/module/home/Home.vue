@@ -1,6 +1,7 @@
 <template>
     <div>
         Home
+        <p @click="onAlert()">alert</p>
     </div>
 </template>
 <script lang="ts">
@@ -19,12 +20,13 @@ export default class Home extends Vue {
     //==================lifecycle hook
     mounted(){
         console.log("Home mounted!");
-        // console.log((this as any).getDateStr(1))
-        console.log(this)
+        console.log((this as any).getDateStr(1));
     }
 
 
     //==================method
-
+    onAlert(){
+        (this as any).mixBubble('xxxxoooo');
+    }
 }
 </script>

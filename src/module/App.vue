@@ -1,6 +1,7 @@
 <template>
     <div id="content">
         <router-view></router-view>
+        <alert></alert>
     </div>
 </template>
 <script lang="ts">
