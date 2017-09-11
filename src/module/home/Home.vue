@@ -26,7 +26,7 @@ export default class Home extends Vue {
 
     //==================method
     onAlert(){
-        (this as any).mixBubble('xxxxoooo');
+        (this as any).mixAlert({tips:'xxxxoooo'});
     }
 }
 </script>

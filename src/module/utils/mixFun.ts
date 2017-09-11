@@ -3,8 +3,8 @@ import Vue from 'vue';
 const mixFun = {
     methods:{
         //气泡提示
-        mixBubble (msg,callback){
-            this.$root.eventHub.$emit('showAlert',msg,callback);
+        mixAlert (obj) {
+            this.$root.eventHub.$emit('showAlert',obj);
         },
 
         //=========================================时间处理
