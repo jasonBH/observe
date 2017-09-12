@@ -20,7 +20,6 @@ import testClass from '../test/externalLib/testlib'
 let tc = new testClass();
 
 
-
 FastClick.attach(document.body);
 
 let vm = (window as any).vm = new Vue({
