@@ -15,9 +15,7 @@ import '../module/utils/mixFun';
 /* 组件 */
 import App from '@/module/App.vue';
 
-/* test */
-import testClass from '../test/externalLib/testlib'
-let tc = new testClass();
+
 
 
 FastClick.attach(document.body);
