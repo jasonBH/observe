@@ -29,3 +29,4 @@ let vm = (window as any).vm = new Vue({
 })
 
 vm.$mount('#app');
+

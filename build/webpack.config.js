@@ -90,6 +90,9 @@ plugins = plugins.concat(plugin_html());
     // new webpack.ProvidePlugin({"_":"lodash"})
     // new webpack.ProvidePlugin({"Vue":"vue"})
 // )
+// const extractCSS = new ExtractTextPlugin("css/[name]"+out_chunkhash+".css");
+// const extractSCSS = new ExtractTextPlugin("css/[name]"+out_chunkhash+".css");
+
 plugins.push(
     //抽取公共库/代码，配合entry使用//页面上使用的时候最后一个会块最先加载,其它依次加载
     new webpack.optimize.CommonsChunkPlugin({
@@ -210,13 +213,21 @@ var config = {
                 })
             },
             {
-                test: /\.scss$/,
-                exclude:[PATH_nodeMod],
-                use: ExtractTextWebpackPlugin.extract({
-                    fallback: 'style-loader',
-                    use: ['css-loader', 'sass-loader']
-                })
+                test: /\.scss|.sass$/i,
+                use: [
+                    { loader: "style-loader" }, // 将 JS 字符串生成为 style 节点
+                    { loader: "css-loader" }, // 将 CSS 转化成 CommonJS 模块
+                    { loader: "sass-loader" } // 将 Sass 编译成 CSS
+                ]
             },
+            // {
+            //     test: /\.scss$/,
+            //     exclude:[PATH_nodeMod],
+            //     use: ExtractTextWebpackPlugin.extract({
+            //         fallback: 'style-loader',
+            //         use: ['css-loader', 'sass-loader']
+            //     })
+            // },
             {
                 test:/\.html$/,
                 use:'html-loader'
@@ -234,7 +245,7 @@ var config = {
     plugins:plugins,
     resolve: {
         modules: [PATH_root+"/node_modules/", PATH_src],
-        extensions: ['.js', '.ts', '.ts', '.vue', '.css', '.scss', '.png', '.jpg', '.gif', '.json'],
+        extensions: ['.js', '.ts', '.vue', '.css', '.scss', '.sass', '.json'],
         alias: Object.assign(
             pathmap.lib,
             {
@@ -243,7 +254,7 @@ var config = {
         )
     },
     externals:{
-        Vue:"Vue"
+
     },
 }
 // console.log("config:",JSON.stringify(config))
