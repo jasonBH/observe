@@ -51,7 +51,7 @@ var entries = function(){
 const testPlugin = require('./custom_modules/FileInfoPlugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
-const ExtractTextWebpackPlugin = require('extract-text-webpack-plugin');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const ServiceWorkerWebpackPlugin = require('serviceworker-webpack-plugin');
 const OptimizeCSSPlugin = require('optimize-css-assets-webpack-plugin');
@@ -90,10 +90,17 @@ plugins = plugins.concat(plugin_html());
     // new webpack.ProvidePlugin({"_":"lodash"})
     // new webpack.ProvidePlugin({"Vue":"vue"})
 // )
-// const extractCSS = new ExtractTextPlugin("css/[name]"+out_chunkhash+".css");
-// const extractSCSS = new ExtractTextPlugin("css/[name]"+out_chunkhash+".css");
+const extractCSS = new ExtractTextPlugin({
+    filename: "css/[name]"+out_chunkhash+".css"
+});
+const extractSass = new ExtractTextPlugin({
+    filename: "css/[name]"+out_chunkhash+".css",
+    disable: isDev
+});
 
 plugins.push(
+    extractCSS,
+    extractSass,
     //抽取公共库/代码，配合entry使用//页面上使用的时候最后一个会块最先加载,其它依次加载
     new webpack.optimize.CommonsChunkPlugin({
         "names": ["common"],
@@ -110,7 +117,7 @@ plugins.push(
         }
     }),
     //抽取css
-    new ExtractTextWebpackPlugin("css/[name]"+out_chunkhash+".css"),
+    // new ExtractTextPlugin("css/[name]"+out_chunkhash+".css"),
     //service worker
     new ServiceWorkerWebpackPlugin({
         entry: getPathToSrc(pathmap.pathServiceWorkers),
@@ -207,27 +214,32 @@ var config = {
             {
                 test: /\.css$/,
                 exclude:[PATH_nodeMod],
-                use: ExtractTextWebpackPlugin.extract({
+                use: extractCSS.extract({
                     fallback: "style-loader",
                     use: "css-loader"
                 })
             },
-            {
-                test: /\.scss|.sass$/i,
-                use: [
-                    { loader: "style-loader" }, // 将 JS 字符串生成为 style 节点
-                    { loader: "css-loader" }, // 将 CSS 转化成 CommonJS 模块
-                    { loader: "sass-loader" } // 将 Sass 编译成 CSS
-                ]
-            },
             // {
-            //     test: /\.scss$/,
-            //     exclude:[PATH_nodeMod],
-            //     use: ExtractTextWebpackPlugin.extract({
-            //         fallback: 'style-loader',
-            //         use: ['css-loader', 'sass-loader']
-            //     })
+            //     test: /\.scss|.sass$/i,
+            //     use: [
+            //         { loader: "style-loader" }, // 将 JS 字符串生成为 style 节点
+            //         { loader: "css-loader" }, // 将 CSS 转化成 CommonJS 模块
+            //         { loader: "sass-loader" } // 将 Sass 编译成 CSS
+            //     ]
             // },
+            {
+                test: /\.scss$/,
+                exclude:[PATH_nodeMod],
+                use: extractSass.extract({
+                    use: [{
+                        loader: "css-loader"
+                    }, {
+                        loader: "sass-loader"
+                    }],
+                    // 在开发环境使用 style-loader
+                    fallback: "style-loader"
+                })
+            },
             {
                 test:/\.html$/,
                 use:'html-loader'
